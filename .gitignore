@@ -1,5 +1,5 @@
 .idea
 venv
-.txt
-.csv
-.pyc
+*.txt
+*.csv
+*.pyc
