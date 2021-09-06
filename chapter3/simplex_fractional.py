@@ -1,3 +1,4 @@
+import json
 from fractions import Fraction
 import numpy as np
 import sys
@@ -19,8 +20,8 @@ def decide_leaving(table, enter_col_index):
     for i in range(1, len(table)):
         if table[i][enter_col_index] <= 0:
             intercepts.append(-1)
-            continue
-        intercepts.append(Fraction(table[i][-1], table[i][enter_col_index]))
+        else:
+            intercepts.append(Fraction(table[i][-1], table[i][enter_col_index]))
 
     intercepts_in_order = intercepts[:]
     intercepts_in_order.sort()
@@ -75,6 +76,22 @@ def row_initialize(original):
     for coefficient in row_in_integer:
         row_in_fraction.append(Fraction(coefficient))
     return row_in_fraction
+
+
+def handle_request(matrix):
+    np_matrix = np.array([[Fraction(num) for num in row] for row in matrix])
+    iteration_times = 0
+    iteration = dict()
+    print(np_matrix)
+    while np.any(np_matrix[0] < 0):
+        iteration_times += 1
+        pivot_col = np.argmin(np_matrix[0])
+        pivot_row = decide_leaving(np_matrix, pivot_col)
+        np_matrix = change(np_matrix, pivot_row, pivot_col)
+        print(np_matrix)
+        iteration[iteration_times] = json.dumps([[(num.numerator, num.denominator) for num in row] for row in np_matrix])
+
+    return iteration
 
 
 if __name__ == '__main__':
